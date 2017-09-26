@@ -7,6 +7,7 @@
     tools:context="net.rensyuu.mytodo.MainActivity">
 
     <ListView
+        android:id="@+id/task_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
