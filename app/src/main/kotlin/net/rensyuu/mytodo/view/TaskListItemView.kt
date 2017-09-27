@@ -23,7 +23,7 @@ class TaskListItemView : FrameLayout {
     }
 
     fun SetTask(task: Task) {
-        task?.let {
+        task.let {
             //taskCheckBox.setText(it.name)//androidStudioに文句を言われた！！
             //GetとSetが用意してある場合Kotlinだとこう書かないとちょっと怒られる
             taskCheckBox.text = it.name

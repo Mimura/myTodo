@@ -7,8 +7,8 @@ import android.widget.BaseAdapter
 import net.rensyuu.mytodo.model.Task
 import net.rensyuu.mytodo.view.TaskListItemView
 
-class TaskListAdapter(private val context:Context) : BaseAdapter(){
-    var tasks: List<Task> = emptyList()
+class TaskListAdapter(private val context: Context) : BaseAdapter() {
+    var tasks: MutableList<Task> = mutableListOf()
 
     override fun getCount(): Int {
         return tasks.size
