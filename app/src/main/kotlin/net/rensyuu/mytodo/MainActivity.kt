@@ -67,6 +67,7 @@ class MainActivity : FragmentTextInput.MyListener, AppCompatActivity() {
         fab.setOnClickListener {
             openTextInput()
             fab.hide()
+            fab.isClickable = false
         }
     }
 
@@ -122,6 +123,7 @@ class MainActivity : FragmentTextInput.MyListener, AppCompatActivity() {
             commit()
         }
         fab.show()
+        fab.isClickable = true
     }
 
     override fun onClickOk(text: String) {
