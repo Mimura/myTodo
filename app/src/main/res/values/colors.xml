@@ -3,4 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <!--renderingError回避-->
+    <item name="visible" type="id" />
+    <item name="masked" type="id" />
 </resources>

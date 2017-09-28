@@ -24,7 +24,7 @@ class TaskListAdapter(private val context: Context) : BaseAdapter() {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         return (convertView as? TaskListItemView ?: TaskListItemView(context)).apply {
-            SetTask(tasks[position])
+            setTaskItem(tasks[position])
         }
     }
 }

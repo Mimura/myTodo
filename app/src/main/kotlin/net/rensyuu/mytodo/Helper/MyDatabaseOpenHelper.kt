@@ -4,7 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import org.jetbrains.anko.db.*
 
-class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "Test15", null, 1) {
+class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "Test27", null, 1) {
     companion object {
         private var instance: MyDatabaseOpenHelper? = null
 
@@ -20,7 +20,7 @@ class MyDatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "Test15"
     override fun onCreate(db: SQLiteDatabase?) {
         // Here you create tables
         db?.createTable(TaskTableParam.TABLE_NAME, true,
-                TaskTableParam.ID to INTEGER,
+                TaskTableParam.ID to INTEGER + PRIMARY_KEY + AUTOINCREMENT,
                 TaskTableParam.NAME to TEXT,
                 TaskTableParam.STATUS to INTEGER,
                 TaskTableParam.FOLDER_ID to INTEGER
