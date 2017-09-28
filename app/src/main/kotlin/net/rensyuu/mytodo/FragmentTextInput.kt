@@ -13,9 +13,24 @@ import android.widget.EditText
 
 // Fragmentクラスを継承します
 class FragmentTextInput : Fragment() {
+
+    companion object {
+
+        fun newInstance(target: Fragment, requestCode: Int): FragmentTextInput {
+            val fragment = FragmentTextInput()
+            fragment.setTargetFragment(target, requestCode)
+
+            val args = Bundle()
+            fragment.arguments = args
+
+            return fragment
+        }
+
+    }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        return inflater!!.inflate(R.layout.flagment_text_input, container, false)
+        return inflater!!.inflate(R.layout.fragment_task_input, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -47,6 +62,16 @@ class FragmentTextInput : Fragment() {
         if (context is MyListener) {
             // リスナーをここでセットするようにします
             myListener = context
+        }
+
+        if (myListener != null) {
+            return
+        }
+
+        //呼び出し元がフラグメントだった場合
+        val preFragment = targetFragment
+        if (preFragment is MyListener) {
+            myListener = preFragment
         }
     }
 
