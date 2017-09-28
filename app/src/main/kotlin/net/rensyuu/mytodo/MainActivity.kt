@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ListView
+import net.rensyuu.mytodo.GlobalStatus.ListMode
 import net.rensyuu.mytodo.Helper.MyDatabaseOpenHelper.TaskTableParam
 import net.rensyuu.mytodo.Helper.TaskParser
 import net.rensyuu.mytodo.Helper.database
@@ -36,27 +37,26 @@ class MainActivity : FragmentTextInput.MyListener, AppCompatActivity() {
         taskList.setOnItemClickListener { _, view, i, _ ->
             onTapListItem(view, i)
         }
-
     }
 
     private fun onTapListItem(itemView: View, positionI: Int) {
         val item = itemView as TaskListItemView
         val task = item.task
-        if (task != null) {
-            val status = when (task.status) {
-                Mode.TODO.status -> {
-                    Mode.DONE.status
+        task?.run {
+            val newStatus = when (status) {
+                ListMode.TODO.status -> {
+                    GlobalStatus.ListMode.DONE.status
                 }
-                Mode.DONE.status -> {
-                    Mode.TODO.status
+                ListMode.DONE.status -> {
+                    GlobalStatus.ListMode.TODO.status
                 }
                 else -> {
                     0
                 }
             }
             database.use {
-                update(TaskTableParam.TABLE_NAME, TaskTableParam.STATUS to status)
-                        .whereArgs("${TaskTableParam.ID} = ${task.id}")
+                update(TaskTableParam.TABLE_NAME, TaskTableParam.STATUS to newStatus)
+                        .whereArgs("${TaskTableParam.ID} = ${id}")
                         .exec()
             }
         }
@@ -85,12 +85,12 @@ class MainActivity : FragmentTextInput.MyListener, AppCompatActivity() {
     private fun updateList() {
         val allStr = "0 or 1"
         var statusStr = allStr//All
-        when (mode) {
-            Mode.TODO -> {
-                statusStr = Mode.TODO.status.toString()
+        when (GlobalStatus.currentMode) {
+            GlobalStatus.ListMode.TODO -> {
+                statusStr = GlobalStatus.ListMode.TODO.status.toString()
             }
-            Mode.DONE -> {
-                statusStr = Mode.DONE.status.toString()
+            GlobalStatus.ListMode.DONE -> {
+                statusStr = GlobalStatus.ListMode.DONE.status.toString()
             }
         }
 
@@ -139,13 +139,15 @@ class MainActivity : FragmentTextInput.MyListener, AppCompatActivity() {
     private val adapter: TaskListAdapter by lazy { TaskListAdapter(applicationContext) }
     private val fab: FloatingActionButton by lazy { findViewById(R.id.fab) as FloatingActionButton }
     private var fragment: Fragment? = null
-    private var mode = Mode.ALL
 
+}
 
-    private enum class Mode(val status: Int) {
+object GlobalStatus {
+    var currentMode = ListMode.ALL
+
+    enum class ListMode(val status: Int) {
         ALL(-1),
         TODO(0),
         DONE(1),
     }
-
 }
