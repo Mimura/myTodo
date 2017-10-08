@@ -12,13 +12,13 @@ import android.widget.EditText
 
 
 // Fragmentクラスを継承します
-class FragmentTextInput : Fragment() {
+class FragmentTaskInput : Fragment() {
 
     companion object {
 
-        fun newInstance(target: Fragment, requestCode: Int): FragmentTextInput {
-            val fragment = FragmentTextInput()
-            fragment.setTargetFragment(target, requestCode)
+        fun newInstance(target: Fragment, requestInputMode: InputMode): FragmentTaskInput {
+            val fragment = FragmentTaskInput()
+            fragment.setTargetFragment(target, requestInputMode.num)
 
             val args = Bundle()
             fragment.arguments = args
@@ -37,16 +37,28 @@ class FragmentTextInput : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val buttonOk = view?.findViewById<Button>(R.id.button_ok)
         buttonOk?.setOnClickListener { onClickOk(view) }
+        when (targetRequestCode) {
+            InputMode.CREATE.num -> {
+                buttonOk?.setOnClickListener { onClickOk(view) }
+            }
+            InputMode.EDIT.num -> {
+                buttonOk?.setOnClickListener { onClickEditOk(view) }
+            }
+        }
         val buttonCancel = view?.findViewById<Button>(R.id.button_cansel)
         buttonCancel?.setOnClickListener { onClickCancel(view) }
     }
 
     private fun onClickOk(view: View?) {
-        myListener?.onClickOk(getText(view))
+        listener?.onClickTaskCreateOk(getText(view))
+    }
+
+    private fun onClickEditOk(view: View?) {
+        listener?.onClickTaskEditOk(getText(view))
     }
 
     private fun onClickCancel(view: View?) {
-        myListener?.onClickCancel(getText(view))
+        listener?.onClickTaskInputCancel(getText(view))
     }
 
     private fun getText(view: View?): String {
@@ -59,19 +71,19 @@ class FragmentTextInput : Fragment() {
         super.onAttach(context)
         // APILevel23からは引数がActivity->Contextになっているので注意する
         // contextクラスがMyListenerを実装しているかをチェックする
-        if (context is MyListener) {
+        if (context is Listener) {
             // リスナーをここでセットするようにします
-            myListener = context
+            listener = context
         }
 
-        if (myListener != null) {
+        if (listener != null) {
             return
         }
 
         //呼び出し元がフラグメントだった場合
         val preFragment = targetFragment
-        if (preFragment is MyListener) {
-            myListener = preFragment
+        if (preFragment is Listener) {
+            listener = preFragment
         }
     }
 
@@ -79,14 +91,20 @@ class FragmentTextInput : Fragment() {
     override fun onDetach() {
         super.onDetach()
         // 画面からFragmentが離れたあとに処理が呼ばれることを避けるためにNullで初期化しておく
-        myListener = null
+        listener = null
     }
 
     // 変数を用意する
-    private var myListener: MyListener? = null
+    private var listener: Listener? = null
 
-    interface MyListener {
-        fun onClickOk(text: String)
-        fun onClickCancel(text: String)
+    interface Listener {
+        fun onClickTaskCreateOk(text: String)
+        fun onClickTaskInputCancel(text: String)
+        fun onClickTaskEditOk(text: String)
+    }
+
+    enum class InputMode(val num: Int) {
+        CREATE(0),
+        EDIT(1)
     }
 }

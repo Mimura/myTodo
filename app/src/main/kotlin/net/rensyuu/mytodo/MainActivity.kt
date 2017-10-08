@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
 
 object GlobalStatus {
-    var currentMode = ListMode.ALL
+    var currentMode = ListMode.TODO
 
     enum class ListMode(val status: Int) {
         ALL(-1),

@@ -18,7 +18,7 @@ import org.jetbrains.anko.db.insert
 import org.jetbrains.anko.db.select
 import org.jetbrains.anko.db.update
 
-class FragmentTaskList : FragmentTextInput.MyListener, Fragment() {
+class FragmentTaskList : FragmentTaskInput.Listener, Fragment() {
 
     companion object {
         fun newInstance(target: Fragment, requestCode: Int): FragmentTaskList {
@@ -80,12 +80,24 @@ class FragmentTaskList : FragmentTextInput.MyListener, Fragment() {
 
     private fun initFloatButton() {
         fab.setOnClickListener {
-            openTextInput()
+            openTaskCreate()
             fab.hide()
             fab.isClickable = false
         }
     }
 
+
+    private fun addTask(id: Int, name: String, status: Int, folderId: Int) {
+        context.database.use {
+            insert(
+                    TaskTableParam.TABLE_NAME,
+                    TaskTableParam.ID to id,
+                    TaskTableParam.NAME to name,
+                    TaskTableParam.STATUS to status,
+                    TaskTableParam.FOLDER_ID to folderId
+            )
+        }
+    }
 
     private fun addTask(name: String, status: Int, folderId: Int) {
         context.database.use {
@@ -116,8 +128,8 @@ class FragmentTaskList : FragmentTextInput.MyListener, Fragment() {
         adapter.notifyDataSetChanged()
     }
 
-    private fun openTextInput() {
-        fragment = FragmentTextInput.newInstance(this, 0)
+    private fun openTaskCreate() {
+        fragment = FragmentTaskInput.newInstance(this, FragmentTaskInput.InputMode.CREATE)
         val transaction = fragmentManager.beginTransaction()
         transaction.run {
             add(R.id.adding_view, fragment)
@@ -141,14 +153,22 @@ class FragmentTaskList : FragmentTextInput.MyListener, Fragment() {
         fab.isClickable = true
     }
 
-    override fun onClickOk(text: String) {
+    override fun onClickTaskCreateOk(text: String) {
         addTask(text, 0, 0)
         updateList()
         removeInputFragment()
         hideKeyBoard()
     }
 
-    override fun onClickCancel(text: String) {
+    override fun onClickTaskEditOk(text: String) {
+        //TODO:変更
+        addTask(text, 0, 0)
+        updateList()
+        removeInputFragment()
+        hideKeyBoard()
+    }
+
+    override fun onClickTaskInputCancel(text: String) {
         removeInputFragment()
         hideKeyBoard()
     }
